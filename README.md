@@ -29,9 +29,12 @@ This project predicts the Air Quality Index (AQI) based on various pollutant lev
 
 1. **Environment Requirements**: Ensure you have Python installed, along with the necessary data science libraries.
    ```bash
-   pip install pandas numpy matplotlib seaborn scikit-learn
+   pip install pandas numpy matplotlib seaborn scikit-learn kaggle
    ```
-2. **Dataset**: Place your `city_day.csv` dataset alongside the execution script or within the same folder space. The script also contains logic to automatically find it if you are running it inside Google Colab (i.e., uploaded to `/content/city_day.csv`).
+2. **Dataset**: 
+   - **Using Kaggle API (Recommended)**: The script automatically attempts to download the dataset via the Kaggle API if it isn't found locally. Ensure you have your Kaggle authentication token configured (`~/.kaggle/kaggle.json` or `C:\Users\<User>\.kaggle\kaggle.json` on Windows). 
+   - **Local Backup**: If the API approach fails, simply download the [Air Quality Data in India dataset](https://www.kaggle.com/datasets/rohanrao/air-quality-data-in-india) manually. Extract the zip file and place `city_day.csv` in the same directory as the execution script. 
+   - **Colab**: The script also handles Google Colab environments by looking for `/content/city_day.csv`.
 3. **Execution**: Run the Python file directly or include parts in Jupyter Notebooks / Google Colab to see metrics and EDA graphs.
 
 ```bash

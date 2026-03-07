@@ -9,6 +9,7 @@ using pollutant features.
 # 1. Data Loading & Setup
 # ==========================================
 import os
+import zipfile
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -24,6 +25,24 @@ import warnings
 warnings.filterwarnings('ignore')
 
 # Load the dataset
+# Attempt to download via Kaggle API if not present locally
+if not os.path.exists("city_day.csv") and not os.path.exists("/content/city_day.csv"):
+    print("Dataset not found locally. Attempting to download via Kaggle API...")
+    try:
+        import kaggle
+        kaggle.api.authenticate()
+        kaggle.api.dataset_download_file('rohanrao/air-quality-data-in-india', 'city_day.csv', path='./')
+        
+        # Check if downloaded as zip and extract
+        if os.path.exists("city_day.csv.zip"):
+            with zipfile.ZipFile("city_day.csv.zip", 'r') as zip_ref:
+                zip_ref.extractall("./")
+            os.remove("city_day.csv.zip")
+        print("Successfully downloaded city_day.csv using Kaggle API.")
+    except Exception as e:
+        print(f"Warning: Kaggle API download failed ({e}).")
+        print("Please ensure 'city_day.csv' is downloaded from https://www.kaggle.com/datasets/rohanrao/air-quality-data-in-india and placed in the current directory.")
+
 # This logic supports running in Google Colab or local Jupyter Notebooks
 if os.path.exists("/content/city_day.csv"):
     data = pd.read_csv("/content/city_day.csv")
