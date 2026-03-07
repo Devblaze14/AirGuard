@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-AQI Prediction Project
+AirGuard – Air Quality Prediction and Health Advisory System
 An end-to-end Machine Learning project to predict Air Quality Index (AQI) 
-using pollutant features.
+using pollutant features and provide actionable health recommendations.
 """
 
 # ==========================================
@@ -24,8 +24,13 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 import warnings
 warnings.filterwarnings('ignore')
 
-# Load the dataset
-# Attempt to download via Kaggle API if not present locally
+# Create an outputs directory for saving graphs
+output_dir = "outputs"
+os.makedirs(output_dir, exist_ok=True)
+
+# --- Dataset Loading ---
+# The logic below attempts to automatically load or download the dataset using the Kaggle API.
+# If the file 'city_day.csv' is not found locally, it connects to Kaggle to fetch it.
 if not os.path.exists("city_day.csv") and not os.path.exists("/content/city_day.csv"):
     print("Dataset not found locally. Attempting to download via Kaggle API...")
     try:
@@ -43,36 +48,36 @@ if not os.path.exists("city_day.csv") and not os.path.exists("/content/city_day.
         print(f"Warning: Kaggle API download failed ({e}).")
         print("Please ensure 'city_day.csv' is downloaded from https://www.kaggle.com/datasets/rohanrao/air-quality-data-in-india and placed in the current directory.")
 
-# This logic supports running in Google Colab or local Jupyter Notebooks
+# Read the dataset into a pandas DataFrame
+# This logic supports running in Google Colab (/content/) or local environments
 if os.path.exists("/content/city_day.csv"):
     data = pd.read_csv("/content/city_day.csv")
 elif os.path.exists("city_day.csv"):
     data = pd.read_csv("city_day.csv")
 else:
-    # Use a generic fallback if both don't exist, though it will error if the file is truly absent
+    # Fallback to local
     data = pd.read_csv("city_day.csv")
 
 print("First 5 rows:")
 print(data.head())
 
-print("\nColumns in the dataset:")
-print(data.columns)
-
 # ==========================================
 # 2. Data Cleaning
 # ==========================================
-# Target variable: AQI
-# Feature variables: pollutants
-features = ['PM2.5', 'PM10', 'NO2', 'SO2', 'O3', 'CO']
+# Target variable: The feature we want to predict
 target = 'AQI'
+
+# Feature variables: The inputs used to make the prediction
+features = ['PM2.5', 'PM10', 'NO2', 'SO2', 'O3', 'CO']
 
 # Keep only our selected columns
 df = data[features + [target]].copy()
 
-# Drop rows where target (AQI) is missing
+# --- Handle Missing Values ---
+# 1. Drop rows where the target (AQI) is missing, as we cannot train without a target label
 df = df.dropna(subset=[target])
 
-# For simplicity, fill remaining missing values in features with the column mean
+# 2. Fill remaining missing values in the feature columns with the mean of each respective column
 df[features] = df[features].fillna(df[features].mean())
 
 print(f"\nData shape after cleaning: {df.shape}")
@@ -80,21 +85,26 @@ print(f"\nData shape after cleaning: {df.shape}")
 # ==========================================
 # 3. Exploratory Data Analysis (EDA)
 # ==========================================
+# EDA helps us understand the underlying patterns and relationships in our data.
 print("\n--- Generating EDA visualizations ---")
 
 # 3.1 AQI distribution histogram
+# This shows the frequency of different AQI values across our dataset.
 plt.figure(figsize=(8, 5))
 sns.histplot(df[target], bins=50, kde=True, color='skyblue')
 plt.title("Distribution of Air Quality Index (AQI)")
 plt.xlabel("AQI")
 plt.ylabel("Frequency")
+plt.savefig(os.path.join(output_dir, 'aqi_distribution.png'), bbox_inches='tight')
 plt.show()
 
 # 3.2 Correlation heatmap between pollutants and AQI
+# This heatmap reveals which pollutants have the strongest linear relationship with AQI.
 plt.figure(figsize=(8, 6))
 correlation_matrix = df.corr()
 sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f", linewidths=0.5)
 plt.title("Correlation Heatmap: Pollutants vs AQI")
+plt.savefig(os.path.join(output_dir, 'correlation_heatmap.png'), bbox_inches='tight')
 plt.show()
 
 # 3.3 Scatter plots showing relationships between pollutants and AQI
@@ -108,6 +118,7 @@ for i, feature in enumerate(features):
     axes[i].set_ylabel("AQI")
 
 plt.tight_layout()
+plt.savefig(os.path.join(output_dir, 'pollutant_scatter_plots.png'), bbox_inches='tight')
 plt.show()
 
 # ==========================================
@@ -117,6 +128,7 @@ X = df[features]
 y = df[target]
 
 # Train-test split (80% train, 20% test)
+# This allows us to train the model on one portion of the data and evaluate its performance on unseen data.
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42
 )
@@ -126,27 +138,30 @@ print("Testing samples:", X_test.shape[0])
 # ==========================================
 # 5. Model Training & Comparison
 # ==========================================
-# Initialize the models
+# We initialize three different machine learning models to compare their performance.
 models = {
     "Linear Regression": LinearRegression(),
     "Decision Tree": DecisionTreeRegressor(random_state=42),
     "Random Forest": RandomForestRegressor(n_estimators=100, random_state=42)
 }
 
-# Dictionary to store the results
+# Dictionary to store the evaluation results
 results_dict = []
 trained_models = {}
 
 print("\n--- Training Models ---")
 for name, model in models.items():
-    # Train
+    # Train the model on the training data
     model.fit(X_train, y_train)
     trained_models[name] = model
     
-    # Predict
+    # Predict AQI values for the testing data
     y_pred = model.predict(X_test)
     
-    # Evaluate
+    # Calculate evaluation metrics
+    # MAE (Mean Absolute Error): Average absolute difference between predicted and actual values.
+    # RMSE (Root Mean Squared Error): Standard deviation of the prediction errors.
+    # R2 Score: Proportion of the variance in the dependent variable that is predictable.
     mae = mean_absolute_error(y_test, y_pred)
     mse = mean_squared_error(y_test, y_pred)
     rmse = np.sqrt(mse)
@@ -162,11 +177,12 @@ for name, model in models.items():
 # ==========================================
 # 6. Model Evaluation Results
 # ==========================================
+# Display the performance comparison of all models
 results_df = pd.DataFrame(results_dict)
 print("\nModel Comparison:")
 print(results_df.to_string(index=False))
 
-# Select the best model (Random Forest is usually best here)
+# Select the best model (Random Forest typically performs the best for this dataset)
 best_model_name = "Random Forest"
 best_model = trained_models[best_model_name]
 best_predictions = best_model.predict(X_test)
@@ -177,6 +193,7 @@ best_predictions = best_model.predict(X_test)
 print("\n--- Generating Model Visualizations ---")
 
 # 7.1 Feature Importance (using Random Forest)
+# Shows which pollutants were most useful to the model in predicting AQI.
 feature_importances = best_model.feature_importances_
 importance_df = pd.DataFrame({
     'Feature': features,
@@ -188,15 +205,18 @@ plt.barh(importance_df['Feature'], importance_df['Importance'], color='lightgree
 plt.title("Feature Importance in Predicting AQI (Random Forest)")
 plt.xlabel("Importance Score")
 plt.ylabel("Pollutant")
+plt.savefig(os.path.join(output_dir, 'feature_importance.png'), bbox_inches='tight')
 plt.show()
 
 # 7.2 Actual vs Predicted Visualization (using Best Model)
+# Visually compares the model's predictions against the real test-set values.
 plt.figure(figsize=(8, 5))
 plt.scatter(y_test, best_predictions, alpha=0.5, color='purple')
 plt.plot([y.min(), y.max()], [y.min(), y.max()], 'r--', lw=2) # Diagonal line for perfect prediction
 plt.title(f"Actual vs Predicted AQI ({best_model_name})")
 plt.xlabel("Actual AQI")
 plt.ylabel("Predicted AQI")
+plt.savefig(os.path.join(output_dir, 'actual_vs_predicted.png'), bbox_inches='tight')
 plt.show()
 
 # ==========================================
@@ -205,14 +225,14 @@ plt.show()
 def get_aqi_category(aqi_value):
     """
     Converts a predicted AQI value into a standard category.
-    Includes simple health recommendations.
+    Provides simple, actionable health recommendations based on air quality.
     """
     if aqi_value <= 50:
         return "Good", "Air quality is satisfactory, and air pollution poses little or no risk."
     elif aqi_value <= 100:
         return "Moderate", "Air quality is acceptable. However, there may be a risk for some people, particularly those who are unusually sensitive to air pollution."
     elif aqi_value <= 150:
-        return "Unhealthy for Sensitive Groups", "Members of sensitive groups may experience health effects. The general public is less likely to be affected."
+        return "Unhealthy for Sensitive Groups", "Sensitive groups should reduce outdoor activity. The general public is less likely to be affected."
     elif aqi_value <= 200:
         return "Unhealthy", "Some members of the general public may experience health effects; members of sensitive groups may experience more serious health effects."
     elif aqi_value <= 300:
@@ -222,7 +242,8 @@ def get_aqi_category(aqi_value):
 
 def predict_aqi(pm25, pm10, no2, so2, o3, co):
     """
-    Predicts the AQI based on inputted pollutant levels using the trained Random Forest model.
+    Predicts the AQI based on user-inputted pollutant levels using the trained Random Forest model.
+    Returns the numeric prediction, categorical classification, and a health advisory.
     """
     # Create DataFrame for single prediction matching the feature order
     input_data = pd.DataFrame([[pm25, pm10, no2, so2, o3, co]], columns=features)
@@ -232,7 +253,7 @@ def predict_aqi(pm25, pm10, no2, so2, o3, co):
     return predicted_value, category, recommendation
 
 # Example Usage
-print("\n--- Example AQI Prediction ---")
+print("\n--- Example Prediction Output ---")
 sample_pm25 = 45.0
 sample_pm10 = 120.0
 sample_no2 = 30.0
@@ -241,7 +262,6 @@ sample_o3 = 40.0
 sample_co = 1.2
 
 pred_aqi, cat, rec = predict_aqi(sample_pm25, sample_pm10, sample_no2, sample_so2, sample_o3, sample_co)
-print(f"Input Pollutants - PM2.5: {sample_pm25}, PM10: {sample_pm10}, NO2: {sample_no2}, SO2: {sample_so2}, O3: {sample_o3}, CO: {sample_co}")
-print(f"Predicted AQI: {pred_aqi:.2f}")
-print(f"AQI Category: {cat}")
+print(f"Predicted AQI: {int(round(pred_aqi))}")
+print(f"Category: {cat}")
 print(f"Recommendation: {rec}")

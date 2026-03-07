@@ -1,59 +1,78 @@
-# AQI Prediction Project
+# AirGuard – Air Quality Prediction and Health Advisory System
 
-This project predicts the Air Quality Index (AQI) based on various pollutant levels leveraging Machine Learning models. The existing codebase has been extended into a more comprehensive data science project while remaining accessible and suitable for student-level learning.
+## Project Overview
+AirGuard is an end-to-end Machine Learning project designed to predict the Air Quality Index (AQI) based on various pollutant levels. It provides actionable health advisories by translating raw numerical predictions into human-readable categories. This project serves as an accessible data science pipeline spanning data processing, exploratory data analysis (EDA), model comparison, and deployment logic.
+
+## Problem Statement
+Air pollution is a critical public health issue. Often, raw pollutant sensor values (like PM2.5 or NO2) are difficult for the general public to understand. The goal of this system is to accurately map these multivariate pollutant inputs to a singular, standardized Air Quality Index (AQI) and provide corresponding health recommendations, helping individuals make informed decisions about their daily outdoor activities.
 
 ## Features
+- **Data Processing**: Automatically loads, cleans, and handles missing values within real-world datasets.
+- **Exploratory Data Analysis (EDA)**: Programmatically generates and saves visual insights like distribution histograms, correlation heatmaps, and scatter plots into an `outputs/` folder.
+- **Model Training & Comparison**: Tests multiple algorithms (Linear Regression, Decision Tree, Random Forest) and evaluates them using MAE, RMSE, and R² Score metrics.
+- **Model Insights**: Analyzes and plots exactly which pollutant features exert the heaviest influence on AQI predictions.
+- **Automated Kaggle Integration**: Can pull the dataset securely and automatically via the Kaggle API.
+- **Actionable Prediction**: Offers a reusable Python function `predict_aqi()` that outputs numeric predictions alongside categorized health warnings.
 
-- **Data Processing**: Loads the `city_day.csv` dataset, handles missing values, and isolates the target/feature sets. 
-- **Exploratory Data Analysis (EDA)**: Includes visualizations such as:
-  - AQI Distribution Histogram
-  - Correlation Heatmap between Pollutants and AQI
-  - Scatter plots of Pollutants versus AQI
-- **Model Training & Comparison**: 
-  - Validates performance using Linear Regression, Decision Tree Regressor, and Random Forest Regressor.
-  - Generates clear comparative metrics including Mean Absolute Error (MAE), Root Mean Squared Error (RMSE), and R² Score.
-- **Model Insights**: Features a visualization displaying the most influential pollutants contributing to the AQI score (using Random Forest feature importance).
-- **Actual vs. Predicted**: Plotted comparison of expected and actual AQI values to visually assess model performance.
-- **Actionable Prediction**: Offers a reusable `predict_aqi()` Python function that outputs the predicted AQI, category classification, and generic health recommendation.
+## Dataset
+The project utilizes the [Air Quality Data in India dataset](https://www.kaggle.com/datasets/rohanrao/air-quality-data-in-india) authored by Rohan Rao.
+* **Using Kaggle API (Recommended)**: The script automatically attempts to download the dataset via the Kaggle API if it isn't found locally. Ensure you have your Kaggle authentication token configured (`~/.kaggle/kaggle.json`).
+* **Local Backup**: Alternatively, you can download `city_day.csv` manually and place it in the same directory as the execution script.
 
-## AQI Categories
+## Machine Learning Models Used
+1. **Linear Regression**: Used as a fast, highly interpretable baseline model.
+2. **Decision Tree Regressor**: Captures non-linear relationships between individual combinations of pollutants and AQI.
+3. **Random Forest Regressor**: An ensemble approach used as the final model due to its robustness against overfitting and its high accuracy.
 
-- **Good** (0-50): Air quality is satisfactory.
-- **Moderate** (51-100): Air quality is acceptable, but might affect highly sensitive groups.
-- **Unhealthy for Sensitive Groups** (101-150): Members of sensitive groups may experience health effects.
-- **Unhealthy** (151-200): General public may experience health effects.
-- **Very Unhealthy** (201-300): Health alert; risk of effects is increased for everyone.
-- **Hazardous** (301+): Health warning of emergency conditions.
+## Installation
 
-## Setup & General Usage
-
-1. **Environment Requirements**: Ensure you have Python installed, along with the necessary data science libraries.
+1. **Clone the repository:**
    ```bash
-   pip install pandas numpy matplotlib seaborn scikit-learn kaggle
+   git clone <repository_url>
+   cd AirGuard
    ```
-2. **Dataset**: 
-   - **Using Kaggle API (Recommended)**: The script automatically attempts to download the dataset via the Kaggle API if it isn't found locally. Ensure you have your Kaggle authentication token configured (`~/.kaggle/kaggle.json` or `C:\Users\<User>\.kaggle\kaggle.json` on Windows). 
-   - **Local Backup**: If the API approach fails, simply download the [Air Quality Data in India dataset](https://www.kaggle.com/datasets/rohanrao/air-quality-data-in-india) manually. Extract the zip file and place `city_day.csv` in the same directory as the execution script. 
-   - **Colab**: The script also handles Google Colab environments by looking for `/content/city_day.csv`.
-3. **Execution**: Run the Python file directly or include parts in Jupyter Notebooks / Google Colab to see metrics and EDA graphs.
 
+2. **Install required dependencies:**
+   Make sure you have Python installed, then use the provided `requirements.txt`:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+## Usage
+
+You can run the full machine learning pipeline with a single command:
 ```bash
 python aqi_prediction.py
 ```
+This will automatically:
+1. Load/download the data.
+2. Output comparison metrics for the different models in the terminal.
+3. Generate and save EDA graphs to an `outputs/` folder.
+4. Output an example prediction at the end.
 
-## Making Predictions
-Within your notebook or standard Python script you can call the `predict_aqi()` function directly with the required pollutant features (PM2.5, PM10, NO2, SO2, O3, CO):
+## Example Prediction Output
 
-```python
-from aqi_prediction import predict_aqi
+When utilizing the `predict_aqi()` function on a new set of sensor data:
 
-# Sample query: pm2.5=45.0, pm10=120.0, no2=30.0, so2=15.0, o3=40.0, co=1.2
-pred_aqi, category, recommendation = predict_aqi(45.0, 120.0, 30.0, 15.0, 40.0, 1.2)
-print(f"Predicted AQI: {pred_aqi:.2f} | Category: {category}")
-print(f"Recommendation: {recommendation}")
+```text
+Predicted AQI: 165
+Category: Unhealthy for Sensitive Groups
+Recommendation: Sensitive groups should reduce outdoor activity. The general public is less likely to be affected.
 ```
 
-## Structure
-- `aqi_prediction.py`: The single end-to-end Python file containing all modular steps (Loading, Cleaning, EDA, Model Comparison, Reusable Predictor function).
-- `city_day.csv`: The dataset utilized for training models (Make sure this is present!).
-- `README.md`: Provided project overview documentation.
+## Project Structure
+
+```text
+AirGuard/
+│
+├── aqi_prediction.py     # Main Python script for training, evaluating, and predicting
+├── requirements.txt      # Python dependencies needed to run the project
+├── README.md             # Project documentation (this file)
+├── LICENSE               # Open-source MIT License
+└── outputs/              # (Generated) Folder containing saved plots and visualizations
+```
+
+## Future Improvements
+- **Web Interface**: Wrap the `predict_aqi()` function into a lightweight Flask or Streamlit web application.
+- **Real-Time Data**: Connect the predictor to a live IoT sensor API for real-time local monitoring.
+- **Hyperparameter Tuning**: Introduce `GridSearchCV` to optimize the Random Forest Regressor for even higher accuracy.
