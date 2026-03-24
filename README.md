@@ -1,18 +1,18 @@
 # AirGuard – Air Quality Prediction and Health Advisory System
 
 ## Project Overview
-AirGuard is an end-to-end Machine Learning project designed to predict the Air Quality Index (AQI) based on various pollutant levels. It provides actionable health advisories by translating raw numerical predictions into human-readable categories. This project serves as an accessible data science pipeline spanning data processing, exploratory data analysis (EDA), model comparison, and deployment logic.
+AirGuard is a Machine Learning project to predict Air Quality Index (AQI) based on pollutant levels. It includes data processing, exploratory data analysis (EDA), model comparison, and a prediction function.
 
 ## Problem Statement
-Air pollution is a critical public health issue. Often, raw pollutant sensor values (like PM2.5 or NO2) are difficult for the general public to understand. The goal of this system is to accurately map these multivariate pollutant inputs to a singular, standardized Air Quality Index (AQI) and provide corresponding health recommendations, helping individuals make informed decisions about their daily outdoor activities.
+The goal of this system is to accurately map multivariate pollutant inputs to a standardized Air Quality Index (AQI) and provide corresponding health recommendations.
 
 ## Features
-- **Data Processing**: Automatically loads, cleans, and handles missing values within real-world datasets.
-- **Exploratory Data Analysis (EDA)**: Programmatically generates and saves visual insights like distribution histograms, correlation heatmaps, and scatter plots into an `outputs/` folder.
-- **Model Training & Comparison**: Tests multiple algorithms (Linear Regression, Decision Tree, Random Forest) and evaluates them using MAE, RMSE, and R² Score metrics.
-- **Model Insights**: Analyzes and plots exactly which pollutant features exert the heaviest influence on AQI predictions.
-- **Automated Kaggle Integration**: Can pull the dataset securely and automatically via the Kaggle API.
-- **Actionable Prediction**: Offers a reusable Python function `predict_aqi()` that outputs numeric predictions alongside categorized health warnings.
+- **Data Processing**: Automatically loads, cleans, and handles missing values.
+- **Exploratory Data Analysis (EDA)**: Generates visual insights like histograms, heatmaps, and scatter plots.
+- **Model Training & Comparison**: Tests Linear Regression, Decision Tree, and Random Forest models.
+- **Model Insights**: Analyzes and plots feature importance for AQI predictions.
+- **Automated Kaggle Integration**: Can pull the dataset securely via the Kaggle API.
+- **Actionable Prediction**: Offers a reusable `predict_aqi()` function for numeric predictions and health warnings.
 
 ## Dataset
 The project utilizes the [Air Quality Data in India dataset](https://www.kaggle.com/datasets/rohanrao/air-quality-data-in-india) authored by Rohan Rao.
@@ -20,9 +20,9 @@ The project utilizes the [Air Quality Data in India dataset](https://www.kaggle.
 * **Local Backup**: Alternatively, you can download `city_day.csv` manually and place it in the same directory as the execution script.
 
 ## Machine Learning Models Used
-1. **Linear Regression**: Used as a fast, highly interpretable baseline model.
-2. **Decision Tree Regressor**: Captures non-linear relationships between individual combinations of pollutants and AQI.
-3. **Random Forest Regressor**: An ensemble approach used as the final model due to its robustness against overfitting and its high accuracy.
+1. **Linear Regression**
+2. **Decision Tree Regressor**
+3. **Random Forest Regressor** (Chosen for the final model)
 
 ## Installation
 

@@ -29,8 +29,7 @@ output_dir = "outputs"
 os.makedirs(output_dir, exist_ok=True)
 
 # --- Dataset Loading ---
-# The logic below attempts to automatically load or download the dataset using the Kaggle API.
-# If the file 'city_day.csv' is not found locally, it connects to Kaggle to fetch it.
+
 if not os.path.exists("city_day.csv") and not os.path.exists("/content/city_day.csv"):
     print("Dataset not found locally. Attempting to download via Kaggle API...")
     try:
@@ -49,7 +48,6 @@ if not os.path.exists("city_day.csv") and not os.path.exists("/content/city_day.
         print("Please ensure 'city_day.csv' is downloaded from https://www.kaggle.com/datasets/rohanrao/air-quality-data-in-india and placed in the current directory.")
 
 # Read the dataset into a pandas DataFrame
-# This logic supports running in Google Colab (/content/) or local environments
 if os.path.exists("/content/city_day.csv"):
     data = pd.read_csv("/content/city_day.csv")
 elif os.path.exists("city_day.csv"):
@@ -64,20 +62,16 @@ print(data.head())
 # ==========================================
 # 2. Data Cleaning
 # ==========================================
-# Target variable: The feature we want to predict
 target = 'AQI'
-
-# Feature variables: The inputs used to make the prediction
 features = ['PM2.5', 'PM10', 'NO2', 'SO2', 'O3', 'CO']
 
 # Keep only our selected columns
 df = data[features + [target]].copy()
 
 # --- Handle Missing Values ---
-# 1. Drop rows where the target (AQI) is missing, as we cannot train without a target label
 df = df.dropna(subset=[target])
 
-# 2. Fill remaining missing values in the feature columns with the mean of each respective column
+# 2. Fill remaining missing values in the feature columns with the mean
 df[features] = df[features].fillna(df[features].mean())
 
 print(f"\nData shape after cleaning: {df.shape}")
@@ -85,11 +79,9 @@ print(f"\nData shape after cleaning: {df.shape}")
 # ==========================================
 # 3. Exploratory Data Analysis (EDA)
 # ==========================================
-# EDA helps us understand the underlying patterns and relationships in our data.
 print("\n--- Generating EDA visualizations ---")
 
 # 3.1 AQI distribution histogram
-# This shows the frequency of different AQI values across our dataset.
 plt.figure(figsize=(8, 5))
 sns.histplot(df[target], bins=50, kde=True, color='skyblue')
 plt.title("Distribution of Air Quality Index (AQI)")
@@ -99,7 +91,6 @@ plt.savefig(os.path.join(output_dir, 'aqi_distribution.png'), bbox_inches='tight
 plt.show()
 
 # 3.2 Correlation heatmap between pollutants and AQI
-# This heatmap reveals which pollutants have the strongest linear relationship with AQI.
 plt.figure(figsize=(8, 6))
 correlation_matrix = df.corr()
 sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f", linewidths=0.5)
@@ -128,7 +119,6 @@ X = df[features]
 y = df[target]
 
 # Train-test split (80% train, 20% test)
-# This allows us to train the model on one portion of the data and evaluate its performance on unseen data.
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42
 )
@@ -138,7 +128,6 @@ print("Testing samples:", X_test.shape[0])
 # ==========================================
 # 5. Model Training & Comparison
 # ==========================================
-# We initialize three different machine learning models to compare their performance.
 models = {
     "Linear Regression": LinearRegression(),
     "Decision Tree": DecisionTreeRegressor(random_state=42),
@@ -159,9 +148,7 @@ for name, model in models.items():
     y_pred = model.predict(X_test)
     
     # Calculate evaluation metrics
-    # MAE (Mean Absolute Error): Average absolute difference between predicted and actual values.
-    # RMSE (Root Mean Squared Error): Standard deviation of the prediction errors.
-    # R2 Score: Proportion of the variance in the dependent variable that is predictable.
+    # MAE (Mean Absolute Error)
     mae = mean_absolute_error(y_test, y_pred)
     mse = mean_squared_error(y_test, y_pred)
     rmse = np.sqrt(mse)
@@ -182,7 +169,7 @@ results_df = pd.DataFrame(results_dict)
 print("\nModel Comparison:")
 print(results_df.to_string(index=False))
 
-# Select the best model (Random Forest typically performs the best for this dataset)
+# Select the best model
 best_model_name = "Random Forest"
 best_model = trained_models[best_model_name]
 best_predictions = best_model.predict(X_test)
@@ -193,7 +180,6 @@ best_predictions = best_model.predict(X_test)
 print("\n--- Generating Model Visualizations ---")
 
 # 7.1 Feature Importance (using Random Forest)
-# Shows which pollutants were most useful to the model in predicting AQI.
 feature_importances = best_model.feature_importances_
 importance_df = pd.DataFrame({
     'Feature': features,
@@ -209,7 +195,6 @@ plt.savefig(os.path.join(output_dir, 'feature_importance.png'), bbox_inches='tig
 plt.show()
 
 # 7.2 Actual vs Predicted Visualization (using Best Model)
-# Visually compares the model's predictions against the real test-set values.
 plt.figure(figsize=(8, 5))
 plt.scatter(y_test, best_predictions, alpha=0.5, color='purple')
 plt.plot([y.min(), y.max()], [y.min(), y.max()], 'r--', lw=2) # Diagonal line for perfect prediction
