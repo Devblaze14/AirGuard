@@ -4,3 +4,7 @@ matplotlib
 seaborn
 scikit-learn
 kaggle
+shap
+streamlit
+groq
+python-dotenv
