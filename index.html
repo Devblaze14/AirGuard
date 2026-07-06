@@ -1,809 +1,527 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="dark" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AirGuard &middot; Premium Air Quality & Health Insights</title>
-    <!-- Outfit & Inter Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Phosphor Icons -->
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>AirGuard Dashboard</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#9cdca3",
+                        "primary": "#daebff",
+                        "surface-container-lowest": "#0a0e14",
+                        "secondary-container": "#563f6f",
+                        "on-primary-fixed": "#001d32",
+                        "surface-tint": "#9bcbf8",
+                        "on-primary-fixed-variant": "#104a70",
+                        "surface-dim": "#10141a",
+                        "primary-fixed-dim": "#9bcbf8",
+                        "tertiary": "#b7f9be",
+                        "on-primary-container": "#275b82",
+                        "primary-fixed": "#cde5ff",
+                        "on-secondary": "#3c2654",
+                        "inverse-primary": "#30628a",
+                        "inverse-on-surface": "#2d3137",
+                        "on-secondary-fixed": "#26103e",
+                        "primary-container": "#a2d2ff",
+                        "on-tertiary-container": "#256235",
+                        "background": "#10141a",
+                        "secondary-fixed-dim": "#d8bbf4",
+                        "outline": "#8b9199",
+                        "on-background": "#dfe2eb",
+                        "secondary": "#d8bbf4",
+                        "surface-container-highest": "#31353c",
+                        "surface-variant": "#31353c",
+                        "error-container": "#93000a",
+                        "on-secondary-fixed-variant": "#533d6c",
+                        "on-tertiary-fixed-variant": "#125227",
+                        "on-error-container": "#ffdad6",
+                        "surface-container-high": "#262a31",
+                        "tertiary-fixed-dim": "#95d59d",
+                        "secondary-fixed": "#efdbff",
+                        "error": "#ffb4ab",
+                        "on-primary": "#003352",
+                        "on-secondary-container": "#c9ade5",
+                        "inverse-surface": "#dfe2eb",
+                        "on-tertiary-fixed": "#00210a",
+                        "surface": "#10141a",
+                        "surface-container": "#1c2026",
+                        "on-surface-variant": "#c1c7cf",
+                        "on-tertiary": "#003916",
+                        "outline-variant": "#41474e",
+                        "tertiary-fixed": "#b1f2b8",
+                        "surface-container-low": "#181c22",
+                        "surface-bright": "#353940",
+                        "on-error": "#690005",
+                        "on-surface": "#dfe2eb"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "card-padding": "32px",
+                        "section-gap": "120px",
+                        "container-padding": "64px",
+                        "gutter": "24px",
+                        "container-padding-mobile": "24px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Outfit"],
+                        "headline-lg": ["Outfit"],
+                        "headline-xl": ["Outfit"],
+                        "display-lg": ["Outfit"],
+                        "display-lg-mobile": ["Outfit"],
+                        "label-sm": ["Outfit"],
+                        "body-md": ["Outfit"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.3", "fontWeight": "500" }],
+                        "headline-xl": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "500" }],
+                        "display-lg": ["64px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "display-lg-mobile": ["40px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "label-sm": ["12px", { "lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        :root {
-            --bg-dark: #090a0f;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --text-purple: #c3bef7;
-            
-            --glass-bg: rgba(15, 17, 28, 0.45);
-            --glass-border: rgba(255, 255, 255, 0.07);
-            --glass-glow: rgba(195, 190, 247, 0.05);
-            
-            /* Status Colors */
-            --good: #34d399;
-            --moderate: #fbbf24;
-            --unhealthy-sg: #fb923c;
-            --unhealthy: #f87171;
-            --very-unhealthy: #c084fc;
-            --hazardous: #e11d48;
-            
-            --current-color: var(--good);
-            --current-shadow: rgba(52, 211, 153, 0.4);
+        .glass-card {
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
         }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        .dark .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 40px 40px -10px rgba(0, 0, 0, 0.2);
         }
-
-        body {
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            font-family: 'Inter', sans-serif;
-            min-height: 100vh;
-            overflow-x: hidden;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        .glass-card:hover {
+            transform: scale(1.02);
+            border-color: rgba(0, 0, 0, 0.15);
+            box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.08);
         }
-
-        /* Moving Glassmorphic Background Blobs */
-        .blob-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: -1;
-            overflow: hidden;
-            pointer-events: none;
+        .dark .glass-card:hover {
+            border-color: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 40px 50px -5px rgba(0, 0, 0, 0.3), 0 0 20px rgba(162, 210, 255, 0.1);
         }
-
-        .blob {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(120px);
-            opacity: 0.15;
-            mix-blend-mode: screen;
-            animation: float 20s infinite alternate ease-in-out;
+        .glass-input {
+            background: rgba(0, 0, 0, 0.04);
+            backdrop-filter: blur(12px);
+            border: none;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.12);
         }
-
-        .blob-1 {
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, #8b5cf6 0%, transparent 80%);
-            top: -10%;
-            left: -10%;
-            animation-duration: 25s;
+        .dark .glass-input {
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         }
-
-        .blob-2 {
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, #06b6d4 0%, transparent 80%);
-            bottom: -20%;
-            right: -10%;
-            animation-duration: 30s;
-        }
-
-        .blob-3 {
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, #10b981 0%, transparent 80%);
-            top: 40%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            opacity: 0.08;
-            animation-duration: 22s;
-        }
-
-        @keyframes float {
-            0% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(40px, -60px) scale(1.1); }
-            100% { transform: translate(-20px, 30px) scale(0.95); }
-        }
-
-        /* Header Navigation */
-        header {
-            width: 100%;
-            max-width: 1200px;
-            padding: 1.5rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 10;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-family: 'Outfit', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            background: linear-gradient(135deg, #ffffff 0%, #c3bef7 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .logo i {
-            font-size: 1.75rem;
-            color: #c3bef7;
-            -webkit-text-fill-color: initial;
-            animation: spin-slow 8s linear infinite;
-        }
-
-        @keyframes spin-slow {
-            to { transform: rotate(360deg); }
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-        }
-
-        .nav-links a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        .nav-links a:hover {
-            color: var(--text-main);
-        }
-
-        .btn-cta {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 0.6rem 1.2rem;
-            border-radius: 30px;
-            color: #fff;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s;
-        }
-
-        .btn-cta:hover {
-            background: #fff;
-            color: var(--bg-dark);
-            transform: translateY(-2px);
-        }
-
-        /* Main Container */
-        .main-content {
-            width: 100%;
-            max-width: 1100px;
-            padding: 2rem 1.5rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            z-index: 5;
-        }
-
-        /* Hero / Headline */
-        .hero-section {
-            text-align: center;
-            margin-bottom: 3.5rem;
-            max-width: 650px;
-        }
-
-        .hero-title {
-            font-family: 'Outfit', sans-serif;
-            font-size: 3rem;
-            font-weight: 700;
-            line-height: 1.15;
-            letter-spacing: -0.03em;
-            margin-bottom: 1rem;
-            background: linear-gradient(180deg, #ffffff 0%, #a5b4fc 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .hero-subtitle {
-            color: var(--text-muted);
-            font-size: 1.1rem;
-            font-weight: 400;
-            line-height: 1.5;
-        }
-
-        /* Elegant Search Container */
-        .search-container {
-            display: flex;
-            gap: 0.75rem;
-            width: 100%;
-            max-width: 520px;
-            margin: 0 auto 3rem;
-        }
-
-        .search-box {
-            flex: 1;
-            position: relative;
-        }
-
-        .search-box i {
-            position: absolute;
-            left: 1.25rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-            font-size: 1.35rem;
-        }
-
-        input {
-            width: 100%;
-            padding: 1.1rem 1.25rem 1.1rem 3.25rem;
-            border-radius: 20px;
-            border: 1px solid var(--glass-border);
-            background: var(--glass-bg);
-            color: var(--text-main);
-            font-family: 'Inter', sans-serif;
-            font-size: 1rem;
+        .glass-input:focus {
             outline: none;
-            backdrop-filter: blur(25px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            border-bottom-color: #a2d2ff;
+            box-shadow: 0 10px 20px -10px rgba(162, 210, 255, 0.2);
         }
-
-        input:focus {
-            border-color: rgba(255, 255, 255, 0.25);
-            background: rgba(255, 255, 255, 0.06);
-            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.15), 0 0 0 3px rgba(195, 190, 247, 0.15);
+        
+        /* View Transition circular clip path */
+        ::view-transition-old(root),
+        ::view-transition-new(root) {
+            animation: none;
+            mix-blend-mode: normal;
         }
-
-        .btn-location {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            color: var(--text-main);
-            width: 60px;
-            border-radius: 20px;
-            cursor: pointer;
-            backdrop-filter: blur(25px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.35rem;
+        ::view-transition-old(root) {
+            z-index: 1;
         }
-
-        .btn-location:hover {
-            background: rgba(255, 255, 255, 0.12);
-            border-color: rgba(255, 255, 255, 0.25);
-            transform: translateY(-2px);
+        ::view-transition-new(root) {
+            z-index: 9999;
         }
-
-        .btn-location i {
-            animation: pulse-location 2s infinite alternate;
-        }
-
-        @keyframes pulse-location {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.12); }
-        }
-
-        /* Results Layout Grid */
-        .results-grid {
-            display: none;
-            grid-template-columns: 1.1fr 1.9fr;
-            gap: 1.75rem;
-            width: 100%;
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .results-grid.visible {
-            display: grid;
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Left Side: Score Display Card */
-        .card-main-score {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 28px;
-            padding: 2.5rem 2rem;
-            backdrop-filter: blur(30px);
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            position: relative;
-        }
-
-        .city-tag {
-            font-family: 'Outfit', sans-serif;
-            font-size: 1.35rem;
-            font-weight: 600;
-            margin-bottom: 2rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--text-purple);
-        }
-
-        .city-tag i {
-            font-size: 1.5rem;
-        }
-
-        /* AQI Progress Ring Visualizer */
-        .aqi-visualizer {
-            position: relative;
-            width: 190px;
-            height: 190px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 2rem;
-        }
-
-        .aqi-visualizer svg {
+        
+        .aqi-ring {
+            stroke-dasharray: 283;
+            stroke-dashoffset: 283;
             transform: rotate(-90deg);
-            width: 100%;
-            height: 100%;
-        }
-
-        .aqi-visualizer circle {
-            fill: none;
-            stroke-width: 8;
-        }
-
-        .aqi-visualizer .track {
-            stroke: rgba(255, 255, 255, 0.05);
-        }
-
-        .aqi-visualizer .progress {
-            stroke: var(--current-color);
-            stroke-linecap: round;
-            stroke-dasharray: 528;
-            stroke-dashoffset: 528;
+            transform-origin: center;
             transition: stroke-dashoffset 1.5s cubic-bezier(0.16, 1, 0.3, 1), stroke 0.5s;
-            filter: drop-shadow(0 0 12px var(--current-color));
         }
-
-        .aqi-visualizer-info {
-            position: absolute;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+        
+        .fade-up {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
-
-        .aqi-value-large {
-            font-family: 'Outfit', sans-serif;
-            font-size: 4.5rem;
-            font-weight: 800;
-            line-height: 1;
-            color: var(--text-main);
-            text-shadow: 0 0 25px var(--current-shadow);
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        .aqi-label-sub {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            color: var(--text-muted);
-            margin-top: 0.25rem;
-            font-weight: 600;
-        }
-
-        .badge-severity {
-            padding: 0.5rem 1.25rem;
-            border-radius: 30px;
-            font-family: 'Outfit', sans-serif;
-            font-weight: 600;
-            font-size: 0.95rem;
-            border: 1px solid color-mix(in srgb, var(--current-color) 40%, transparent);
-            background: color-mix(in srgb, var(--current-color) 12%, transparent);
-            color: var(--current-color);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-            backdrop-filter: blur(5px);
-            margin-top: 0.5rem;
-            text-align: center;
-            max-width: 100%;
-        }
-
-        /* Right Side: Pollutants & Advisories */
-        .right-pane {
-            display: flex;
-            flex-direction: column;
-            gap: 1.75rem;
-        }
-
-        /* Recommendation Banner */
-        .advisory-box {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 1.75rem 2rem;
-            backdrop-filter: blur(30px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
-            display: flex;
-            gap: 1.25rem;
-            align-items: flex-start;
-        }
-
-        .advisory-icon {
-            background: color-mix(in srgb, var(--current-color) 15%, transparent);
-            color: var(--current-color);
-            border: 1px solid color-mix(in srgb, var(--current-color) 30%, transparent);
-            border-radius: 16px;
-            width: 48px;
-            height: 48px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            flex-shrink: 0;
-        }
-
-        .advisory-text {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-        }
-
-        .advisory-title {
-            font-family: 'Outfit', sans-serif;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #fff;
-        }
-
-        .advisory-desc {
-            font-size: 0.95rem;
-            color: var(--text-muted);
-            line-height: 1.5;
-        }
-
-        /* Pollutants Section */
-        .section-title {
-            font-family: 'Outfit', sans-serif;
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--text-purple);
-            margin-bottom: 0.75rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .pollutants-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-        }
-
-        .pollutant-card {
-            background: rgba(15, 17, 28, 0.3);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 1.25rem;
-            text-align: left;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .pollutant-card::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: var(--card-accent, var(--glass-border));
-            transition: background 0.3s;
-        }
-
-        .pollutant-card:hover {
-            transform: translateY(-4px) scale(1.02);
-            border-color: rgba(255, 255, 255, 0.15);
-            background: rgba(255, 255, 255, 0.05);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-        }
-
-        .pollutant-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.75rem;
-        }
-
-        .pollutant-name {
-            font-family: 'Outfit', sans-serif;
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: var(--text-muted);
-        }
-
-        .pollutant-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: var(--card-accent, var(--text-muted));
-            box-shadow: 0 0 8px var(--card-accent, transparent);
-        }
-
-        .pollutant-reading {
-            display: flex;
-            align-items: baseline;
-            gap: 0.25rem;
-        }
-
-        .pollutant-value {
-            font-family: 'Outfit', sans-serif;
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: #fff;
-        }
-
-        .pollutant-unit {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-
-        /* Loading Spinner Animation */
-        .loader-wrapper {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-            margin: 3rem 0;
-        }
-
-        .loader-glow {
-            width: 50px;
-            height: 50px;
-            border: 3px solid rgba(255,255,255,0.03);
-            border-radius: 50%;
-            border-top-color: #8b5cf6;
-            border-right-color: #06b6d4;
-            animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-            filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.5));
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .loader-text {
-            font-family: 'Outfit', sans-serif;
-            font-size: 0.95rem;
-            color: var(--text-muted);
-            letter-spacing: 0.05em;
-        }
-
-        /* Footer */
-        footer {
-            margin-top: auto;
-            padding: 3rem 1.5rem 2rem;
-            width: 100%;
-            max-width: 1200px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            z-index: 5;
-        }
-
-        .footer-logo {
-            font-family: 'Outfit', sans-serif;
-            font-weight: 600;
-            color: #fff;
-        }
-
-        /* Responsive Breakpoints */
-        @media (max-width: 900px) {
-            .results-grid {
-                grid-template-columns: 1fr;
-            }
-            .hero-title {
-                font-size: 2.5rem;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .pollutants-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            header {
-                padding: 1.25rem 1rem;
-            }
-            .nav-links {
-                display: none;
-            }
-        }
+        
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+        .delay-300 { animation-delay: 300ms; }
+        .delay-400 { animation-delay: 400ms; }
     </style>
 </head>
-<body>
-
-    <!-- Ambient Glowing Spheres -->
-    <div class="blob-container">
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-        <div class="blob blob-3"></div>
+<body class="bg-slate-50 dark:bg-background text-slate-800 dark:text-on-surface font-body-md antialiased min-h-screen relative overflow-x-hidden transition-colors duration-300">
+    <!-- Toast notification element -->
+    <div id="toast" class="fixed top-6 right-6 z-[9999] glass-card rounded-xl px-6 py-4 flex items-center gap-3 max-w-sm pointer-events-none opacity-0 translate-y-[-20px] transition-all duration-300">
+        <span class="material-symbols-outlined text-error" id="toast-icon">error</span>
+        <span class="text-on-surface text-sm font-medium" id="toast-msg"></span>
     </div>
 
-    <!-- Header / Nav -->
-    <header>
-        <div class="logo">
-            <i class="ph ph-wind"></i>
-            <span>AirGuard</span>
-        </div>
-        <div class="nav-links">
-            <a href="#">Dashboard</a>
-            <a href="#">AI Analysis</a>
-            <a href="#">Pollutants</a>
-            <a href="#">Docs</a>
-        </div>
-        <button class="btn-cta">Vercel API</button>
-    </header>
+    <!-- Fixed Background Shader -->
+    <div class="fixed inset-0 z-0 pointer-events-none opacity-40"></div>
 
-    <!-- Main Content Container -->
-    <div class="main-content">
-        <!-- Hero Section -->
-        <div class="hero-section">
-            <h1 class="hero-title">Breathe easy with smart predictions.</h1>
-            <p class="hero-subtitle">Enter any city or share your current location to evaluate air quality and health advisories powered by AI.</p>
+    <!-- Navigation Shell -->
+    <nav class="bg-white/3 dark:bg-surface-container/3 backdrop-blur-3xl font-body-md text-body-md rounded-full mt-base mx-container-padding sticky top-base border border-white/10 dark:border-white/5 shadow-[0_40px_40px_-10px_rgba(0,0,0,0.2)] flex flex-wrap justify-between items-center w-[calc(100%-48px)] md:w-[calc(100%-128px)] max-w-7xl mx-auto px-6 py-3 z-50 transition-all duration-200">
+        <div class="flex items-center gap-4">
+            <img alt="AirGuard Wind Logo" class="w-8 h-8 object-contain" src="https://lh3.googleusercontent.com/aida/AP1WRLv3H7cNXqNZprmNW8VrKhQsCVMFI-r5-bZw9Oi2RklxDdYCROYAM-KSlxeIoqSJ6-QwVtGGavQEmHT9E61oYnV9quNiXJbH_aQxf31oEnnxATFLH-6WkASWnffXJAAY0XAS24K11Pd5hvaFsVVa0pvcR1Nw-w7w-o1_vBD3UvtH5UuxajS0EElmEBkIVM1E56M1ZsdcZXhZy_74SDgm_zFQbyYqIXXageglAur_8cEB5RNDKxKYxhh6fT6G"/>
+            <span class="font-headline-lg text-headline-lg font-semibold tracking-tight text-on-surface dark:text-on-surface">AirGuard</span>
         </div>
-
-        <!-- Search Container -->
-        <div class="search-container">
-            <div class="search-box">
-                <i class="ph ph-magnifying-glass"></i>
-                <input type="text" id="cityInput" placeholder="Search a city name..." autocomplete="off">
-            </div>
-            <button class="btn-location" id="locationBtn" title="Use current location">
-                <i class="ph ph-crosshair"></i>
+        
+        <!-- Toggle button for mobile nav -->
+        <div class="flex items-center gap-2 md:hidden">
+            <button id="themeToggleMobile" class="text-slate-800 dark:text-on-surface hover:text-blue-600 dark:hover:text-primary transition-colors flex items-center justify-center p-1 mr-2">
+                <span class="material-symbols-outlined" id="themeToggleMobileIcon">light_mode</span>
+            </button>
+            <button id="menuToggle" class="text-slate-800 dark:text-on-surface focus:outline-none p-1">
+                <span class="material-symbols-outlined">menu</span>
             </button>
         </div>
 
+        <div id="navLinks" class="hidden md:flex items-center gap-8 w-full md:w-auto mt-4 md:mt-0 flex-col md:flex-row border-t border-white/5 md:border-t-0 pt-3 md:pt-0">
+            <a class="text-primary font-semibold border-b-2 border-primary py-1" href="#resultsCard">Dashboard</a>
+            <a class="text-on-surface-variant font-medium hover:text-primary transition-all duration-300" href="#forecast-section">Forecast</a>
+            <a class="text-on-surface-variant font-medium hover:text-primary transition-all duration-300" href="#advisories-section">Alerts</a>
+            <a class="text-on-surface-variant font-medium hover:text-primary transition-all duration-300" href="#how-it-works">How it Works</a>
+        </div>
+        
+        <div class="hidden md:flex items-center gap-4">
+            <button class="text-slate-800 dark:text-on-surface hover:text-blue-600 dark:hover:text-primary transition-colors flex items-center justify-center">
+                <span class="material-symbols-outlined">notifications</span>
+            </button>
+            <button id="themeToggle" class="text-slate-800 dark:text-on-surface hover:text-blue-600 dark:hover:text-primary transition-colors flex items-center justify-center">
+                <span class="material-symbols-outlined" id="themeToggleIcon">light_mode</span>
+            </button>
+            <button class="text-slate-800 dark:text-on-surface hover:text-blue-600 dark:hover:text-primary transition-colors flex items-center justify-center mr-4">
+                <span class="material-symbols-outlined">settings</span>
+            </button>
+            <button onclick="scrollToSearch()" class="bg-slate-800 dark:bg-on-surface text-white dark:text-surface-container-lowest font-semibold py-2 px-6 rounded-full hover:shadow-[0_0_20px_rgba(218,235,255,0.3)] transition-all duration-300 transform scale-98 active:scale-95">
+                Predict AQI
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content Canvas -->
+    <main class="relative z-10 max-w-7xl mx-auto px-container-padding-mobile md:px-container-padding pt-section-gap pb-section-gap flex flex-col gap-12">
+        <!-- Hero Section -->
+        <section class="flex flex-col items-center text-center fade-up delay-100">
+            <h1 class="font-display-lg-mobile md:font-display-lg text-on-surface mb-8 max-w-3xl leading-tight">
+                Real-time AI Air Quality Predictions
+            </h1>
+            <div class="w-full max-w-2xl relative">
+                <div class="glass-card rounded-full flex items-center p-2 pl-6 pr-4">
+                    <span class="material-symbols-outlined text-on-surface-variant mr-3">search</span>
+                    <input id="cityInput" class="glass-input flex-1 bg-transparent border-none text-body-lg text-on-surface placeholder:text-on-surface-variant/50 h-12 focus:ring-0" placeholder="Search city or location..." type="text"/>
+                    <button id="locationBtn" class="flex items-center gap-2 bg-white/5 hover:bg-white/10 px-4 py-2 rounded-full transition-colors border border-white/10">
+                        <span class="material-symbols-outlined text-sm">my_location</span>
+                        <span class="font-label-sm">Use GPS</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
         <!-- Loading Spinner -->
-        <div class="loader-wrapper" id="loader">
-            <div class="loader-glow"></div>
-            <div class="loader-text">Analyzing atmospheric features...</div>
+        <div id="loader" class="hidden flex-col items-center gap-4 my-12">
+            <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
+            <span class="text-on-surface-variant text-sm">Predicting air quality...</span>
         </div>
 
-        <!-- Redesigned Glassmorphic Results Grid -->
-        <div class="results-grid" id="resultsCard">
-            <!-- Left Side: Main AQI Display -->
-            <div class="card-main-score">
-                <div class="city-tag" id="displayCity">
-                    <i class="ph-fill ph-map-pin"></i>
+        <!-- Weather Metrics Row (Enrichment) -->
+        <div id="weatherRow" class="hidden grid grid-cols-2 md:grid-cols-4 gap-4 fade-up delay-150">
+            <!-- Temp -->
+            <div class="glass-card rounded-xl p-4 flex items-center gap-4">
+                <span class="material-symbols-outlined text-yellow-500 text-3xl">thermostat</span>
+                <div>
+                    <div class="text-on-surface-variant text-xs uppercase tracking-wider font-semibold">Temperature</div>
+                    <div id="weather-temp" class="text-lg font-bold text-on-surface">--</div>
+                </div>
+            </div>
+            <!-- Humidity -->
+            <div class="glass-card rounded-xl p-4 flex items-center gap-4">
+                <span class="material-symbols-outlined text-blue-400 text-3xl">humidity_mid</span>
+                <div>
+                    <div class="text-on-surface-variant text-xs uppercase tracking-wider font-semibold">Humidity</div>
+                    <div id="weather-humidity" class="text-lg font-bold text-on-surface">--</div>
+                </div>
+            </div>
+            <!-- Wind -->
+            <div class="glass-card rounded-xl p-4 flex items-center gap-4">
+                <span class="material-symbols-outlined text-teal-400 text-3xl">airwave</span>
+                <div>
+                    <div class="text-on-surface-variant text-xs uppercase tracking-wider font-semibold">Wind Speed</div>
+                    <div id="weather-wind" class="text-lg font-bold text-on-surface">--</div>
+                </div>
+            </div>
+            <!-- UV Index -->
+            <div class="glass-card rounded-xl p-4 flex items-center gap-4">
+                <span class="material-symbols-outlined text-purple-400 text-3xl">light_mode</span>
+                <div>
+                    <div class="text-on-surface-variant text-xs uppercase tracking-wider font-semibold">UV Index</div>
+                    <div id="weather-uv" class="text-lg font-bold text-on-surface">--</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Grid -->
+        <section id="resultsCard" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+            <!-- Central Hero AQI Card -->
+            <div class="lg:col-span-4 glass-card rounded-xl p-card-padding flex flex-col items-center justify-center min-h-[400px] fade-up delay-200 relative overflow-hidden group">
+                <div class="absolute inset-0 bg-gradient-to-b from-tertiary-container/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                <h2 class="font-headline-lg mb-1 text-on-surface-variant z-10">Current AQI</h2>
+                <div id="displayCity" class="text-on-surface-variant/80 text-sm font-medium z-10 mb-4 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-sm">location_on</span>
                     <span>--</span>
                 </div>
                 
-                <div class="aqi-visualizer">
-                    <svg viewBox="0 0 180 180">
-                        <circle class="track" cx="90" cy="90" r="84"></circle>
-                        <circle class="progress" id="aqiRing" cx="90" cy="90" r="84"></circle>
+                <div class="relative w-48 h-48 mb-4 flex items-center justify-center z-10">
+                    <svg class="absolute inset-0 w-full h-full" viewbox="0 0 100 100">
+                        <circle cx="50" cy="50" fill="none" r="45" stroke="rgba(255,255,255,0.05)" stroke-width="4"></circle>
+                        <circle id="aqiRing" class="aqi-ring" cx="50" cy="50" fill="none" r="45" stroke="url(#aqi-grad)" stroke-linecap="round" stroke-width="6"></circle>
+                        <defs>
+                            <lineargradient id="aqi-grad" x1="0%" x2="100%" y1="100%" y2="0%">
+                                <stop id="grad-start" offset="0%" stop-color="#9cdca3"></stop>
+                                <stop id="grad-end" offset="100%" stop-color="#fef08a"></stop>
+                            </lineargradient>
+                        </defs>
                     </svg>
-                    <div class="aqi-visualizer-info">
-                        <span class="aqi-value-large" id="aqiValue">--</span>
-                        <span class="aqi-label-sub">AQI</span>
+                    <div class="flex flex-col items-center text-center">
+                        <span id="aqiValue" class="text-6xl font-display-lg text-on-surface">--</span>
+                        <span id="dominantText" class="text-[10px] text-on-surface-variant uppercase tracking-wider font-semibold mt-1"></span>
+                    </div>
+                </div>
+                
+                <div id="categoryBadge" class="bg-tertiary-container/20 text-tertiary-container border border-tertiary-container/30 px-6 py-2 rounded-full font-label-sm uppercase tracking-wider z-10 mb-4">
+                    --
+                </div>
+
+                <!-- AQI Scale Reference -->
+                <div class="w-full px-4 mt-2 z-10">
+                    <div class="relative h-2 w-full rounded-full bg-gradient-to-r from-green-400 via-yellow-300 via-orange-400 via-red-400 to-purple-600">
+                        <div id="aqiPointer" class="absolute top-[-4px] left-[50%] transform -translate-x-1/2 w-3.5 h-3.5 rounded-full border-2 border-background bg-white shadow-md transition-all duration-1000"></div>
+                    </div>
+                    <div class="flex justify-between text-[9px] text-on-surface-variant mt-1.5 font-semibold">
+                        <span>0 (GOOD)</span>
+                        <span>300 (HAZARD)</span>
                     </div>
                 </div>
 
-                <div class="badge-severity" id="categoryBadge">--</div>
-            </div>
-
-            <!-- Right Side: Recommendation & Pollutant Grid -->
-            <div class="right-pane">
-                <!-- AI Advisory Banner -->
-                <div class="advisory-box">
-                    <div class="advisory-icon">
-                        <i class="ph-fill ph-shield-check"></i>
-                    </div>
-                    <div class="advisory-text">
-                        <span class="advisory-title">Health Recommendation</span>
-                        <span class="advisory-desc" id="recommendationMsg">--</span>
-                    </div>
-                </div>
-
-                <div>
-                    <h3 class="section-title">
-                        <i class="ph ph-activity"></i>
-                        <span>Pollutant Metrics</span>
-                    </h3>
-                    
-                    <div class="pollutants-grid">
-                        <!-- PM2.5 -->
-                        <div class="pollutant-card" id="card-pm25">
-                            <div class="pollutant-meta">
-                                <span class="pollutant-name">PM2.5</span>
-                                <span class="pollutant-dot"></span>
-                            </div>
-                            <div class="pollutant-reading">
-                                <span class="pollutant-value" id="val-pm25">--</span>
-                                <span class="pollutant-unit">µg/m³</span>
-                            </div>
-                        </div>
-
-                        <!-- PM10 -->
-                        <div class="pollutant-card" id="card-pm10">
-                            <div class="pollutant-meta">
-                                <span class="pollutant-name">PM10</span>
-                                <span class="pollutant-dot"></span>
-                            </div>
-                            <div class="pollutant-reading">
-                                <span class="pollutant-value" id="val-pm10">--</span>
-                                <span class="pollutant-unit">µg/m³</span>
-                            </div>
-                        </div>
-
-                        <!-- NO2 -->
-                        <div class="pollutant-card" id="card-no2">
-                            <div class="pollutant-meta">
-                                <span class="pollutant-name">NO2</span>
-                                <span class="pollutant-dot"></span>
-                            </div>
-                            <div class="pollutant-reading">
-                                <span class="pollutant-value" id="val-no2">--</span>
-                                <span class="pollutant-unit">µg/m³</span>
-                            </div>
-                        </div>
-
-                        <!-- SO2 -->
-                        <div class="pollutant-card" id="card-so2">
-                            <div class="pollutant-meta">
-                                <span class="pollutant-name">SO2</span>
-                                <span class="pollutant-dot"></span>
-                            </div>
-                            <div class="pollutant-reading">
-                                <span class="pollutant-value" id="val-so2">--</span>
-                                <span class="pollutant-unit">µg/m³</span>
-                            </div>
-                        </div>
-
-                        <!-- O3 -->
-                        <div class="pollutant-card" id="card-o3">
-                            <div class="pollutant-meta">
-                                <span class="pollutant-name">O3</span>
-                                <span class="pollutant-dot"></span>
-                            </div>
-                            <div class="pollutant-reading">
-                                <span class="pollutant-value" id="val-o3">--</span>
-                                <span class="pollutant-unit">µg/m³</span>
-                            </div>
-                        </div>
-
-                        <!-- CO -->
-                        <div class="pollutant-card" id="card-co">
-                            <div class="pollutant-meta">
-                                <span class="pollutant-name">CO</span>
-                                <span class="pollutant-dot"></span>
-                            </div>
-                            <div class="pollutant-reading">
-                                <span class="pollutant-value" id="val-co">--</span>
-                                <span class="pollutant-unit">mg/m³</span>
-                            </div>
-                        </div>
-                    </div>
+                <div id="timestamp" class="text-[10px] text-on-surface-variant/60 mt-6 z-10">
+                    Last updated: --
                 </div>
             </div>
-        </div>
-    </div>
+
+            <!-- Pollutants Matrix -->
+            <div class="lg:col-span-8 grid grid-cols-2 md:grid-cols-3 gap-gutter fade-up delay-300">
+                <!-- PM2.5 -->
+                <div class="glass-card rounded-xl p-6 flex flex-col justify-between">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-on-surface-variant font-label-sm uppercase tracking-wider">PM2.5</span>
+                        <span class="material-symbols-outlined text-primary text-xl">air</span>
+                    </div>
+                    <div class="flex items-baseline gap-2 mb-2">
+                        <span id="val-pm25" class="font-headline-xl text-on-surface">--</span>
+                        <span class="text-on-surface-variant text-sm">µg/m³</span>
+                    </div>
+                    <!-- Safety Bar -->
+                    <div class="w-full bg-white/5 rounded-full h-1.5 overflow-hidden">
+                        <div id="bar-pm25" class="h-full bg-green-400 transition-all duration-1000" style="width: 0%"></div>
+                    </div>
+                    <div id="pct-pm25" class="text-[10px] text-on-surface-variant mt-1">--% of WHO safety limit</div>
+                </div>
+                <!-- PM10 -->
+                <div class="glass-card rounded-xl p-6 flex flex-col justify-between">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-on-surface-variant font-label-sm uppercase tracking-wider">PM10</span>
+                        <span class="material-symbols-outlined text-primary text-xl">blur_on</span>
+                    </div>
+                    <div class="flex items-baseline gap-2 mb-2">
+                        <span id="val-pm10" class="font-headline-xl text-on-surface">--</span>
+                        <span class="text-on-surface-variant text-sm">µg/m³</span>
+                    </div>
+                    <!-- Safety Bar -->
+                    <div class="w-full bg-white/5 rounded-full h-1.5 overflow-hidden">
+                        <div id="bar-pm10" class="h-full bg-green-400 transition-all duration-1000" style="width: 0%"></div>
+                    </div>
+                    <div id="pct-pm10" class="text-[10px] text-on-surface-variant mt-1">--% of WHO safety limit</div>
+                </div>
+                <!-- NO2 -->
+                <div class="glass-card rounded-xl p-6 flex flex-col justify-between">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-on-surface-variant font-label-sm uppercase tracking-wider">NO2</span>
+                        <span class="material-symbols-outlined text-secondary text-xl">factory</span>
+                    </div>
+                    <div class="flex items-baseline gap-2 mb-2">
+                        <span id="val-no2" class="font-headline-xl text-on-surface">--</span>
+                        <span class="text-on-surface-variant text-sm">µg/m³</span>
+                    </div>
+                    <!-- Safety Bar -->
+                    <div class="w-full bg-white/5 rounded-full h-1.5 overflow-hidden">
+                        <div id="bar-no2" class="h-full bg-green-400 transition-all duration-1000" style="width: 0%"></div>
+                    </div>
+                    <div id="pct-no2" class="text-[10px] text-on-surface-variant mt-1">--% of WHO safety limit</div>
+                </div>
+                <!-- SO2 -->
+                <div class="glass-card rounded-xl p-6 flex flex-col justify-between">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-on-surface-variant font-label-sm uppercase tracking-wider">SO2</span>
+                        <span class="material-symbols-outlined text-secondary text-xl">cloud</span>
+                    </div>
+                    <div class="flex items-baseline gap-2 mb-2">
+                        <span id="val-so2" class="font-headline-xl text-on-surface">--</span>
+                        <span class="text-on-surface-variant text-sm">µg/m³</span>
+                    </div>
+                    <!-- Safety Bar -->
+                    <div class="w-full bg-white/5 rounded-full h-1.5 overflow-hidden">
+                        <div id="bar-so2" class="h-full bg-green-400 transition-all duration-1000" style="width: 0%"></div>
+                    </div>
+                    <div id="pct-so2" class="text-[10px] text-on-surface-variant mt-1">--% of WHO safety limit</div>
+                </div>
+                <!-- O3 -->
+                <div class="glass-card rounded-xl p-6 flex flex-col justify-between">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-on-surface-variant font-label-sm uppercase tracking-wider">O3</span>
+                        <span class="material-symbols-outlined text-tertiary-container text-xl">wb_sunny</span>
+                    </div>
+                    <div class="flex items-baseline gap-2 mb-2">
+                        <span id="val-o3" class="font-headline-xl text-on-surface">--</span>
+                        <span class="text-on-surface-variant text-sm">µg/m³</span>
+                    </div>
+                    <!-- Safety Bar -->
+                    <div class="w-full bg-white/5 rounded-full h-1.5 overflow-hidden">
+                        <div id="bar-o3" class="h-full bg-green-400 transition-all duration-1000" style="width: 0%"></div>
+                    </div>
+                    <div id="pct-o3" class="text-[10px] text-on-surface-variant mt-1">--% of WHO safety limit</div>
+                </div>
+                <!-- CO -->
+                <div class="glass-card rounded-xl p-6 flex flex-col justify-between">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-on-surface-variant font-label-sm uppercase tracking-wider">CO</span>
+                        <span class="material-symbols-outlined text-primary text-xl">directions_car</span>
+                    </div>
+                    <div class="flex items-baseline gap-2 mb-2">
+                        <span id="val-co" class="font-headline-xl text-on-surface">--</span>
+                        <span class="text-on-surface-variant text-sm">mg/m³</span>
+                    </div>
+                    <!-- Safety Bar -->
+                    <div class="w-full bg-white/5 rounded-full h-1.5 overflow-hidden">
+                        <div id="bar-co" class="h-full bg-green-400 transition-all duration-1000" style="width: 0%"></div>
+                    </div>
+                    <div id="pct-co" class="text-[10px] text-on-surface-variant mt-1">--% of WHO safety limit</div>
+                </div>
+            </div>
+
+            <!-- AI Health Advisory -->
+            <div id="advisories-section" class="lg:col-span-12 grid grid-cols-1 md:grid-cols-2 gap-gutter scroll-mt-24">
+                <div class="glass-card rounded-xl p-card-padding flex items-start gap-6 relative overflow-hidden">
+                    <div class="w-12 h-12 rounded-full bg-error-container/20 flex items-center justify-center shrink-0 border border-error/20">
+                        <span class="material-symbols-outlined text-error">warning</span>
+                    </div>
+                    <div>
+                        <h3 class="font-headline-lg text-on-surface mb-2">Sensitive Groups</h3>
+                        <p id="sensitiveAdvisory" class="text-on-surface-variant font-body-md min-h-[3.2rem]">
+                            --
+                        </p>
+                    </div>
+                </div>
+                <div class="glass-card rounded-xl p-card-padding flex items-start gap-6 relative overflow-hidden">
+                    <div class="w-12 h-12 rounded-full bg-tertiary-container/20 flex items-center justify-center shrink-0 border border-tertiary-container/20">
+                        <span class="material-symbols-outlined text-tertiary-container">health_and_safety</span>
+                    </div>
+                    <div>
+                        <h3 class="font-headline-lg text-on-surface mb-2">General Public</h3>
+                        <p id="generalAdvisory" class="text-on-surface-variant font-body-md min-h-[3.2rem]">
+                            --
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Forecast Line Chart Section (Enrichment) -->
+            <div id="forecast-section" class="lg:col-span-12 glass-card rounded-xl p-6 md:p-8 scroll-mt-24">
+                <h3 class="font-headline-lg text-on-surface mb-6 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">timeline</span>
+                    24-Hour AQI Trend Forecast
+                </h3>
+                <div class="relative w-full h-[300px]">
+                    <canvas id="forecastChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- How AirGuard Works Info Section (Enrichment) -->
+        <section id="how-it-works" class="scroll-mt-24">
+            <h2 class="font-display-lg-mobile text-on-surface text-center mb-12">How AirGuard Works</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Step 1 -->
+                <div class="glass-card rounded-xl p-card-padding flex flex-col items-center text-center">
+                    <div class="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-6 border border-primary/20">
+                        <span class="material-symbols-outlined">map</span>
+                    </div>
+                    <h3 class="font-headline-lg text-on-surface mb-3">1. Retrieve Location</h3>
+                    <p class="text-on-surface-variant text-sm leading-relaxed">
+                        We fetch current weather patterns and specific atmospheric pollutant readings from satellites and local stations via Open-Meteo API.
+                    </p>
+                </div>
+                <!-- Step 2 -->
+                <div class="glass-card rounded-xl p-card-padding flex flex-col items-center text-center">
+                    <div class="w-12 h-12 rounded-full bg-secondary/10 text-secondary flex items-center justify-center mb-6 border border-secondary/20">
+                        <span class="material-symbols-outlined">memory</span>
+                    </div>
+                    <h3 class="font-headline-lg text-on-surface mb-3">2. Run AI Inference</h3>
+                    <p class="text-on-surface-variant text-sm leading-relaxed">
+                        Our local serverless Random Forest regressor analyses inputs to predict the consolidated Air Quality Index (AQI) based on historical models.
+                    </p>
+                </div>
+                <!-- Step 3 -->
+                <div class="glass-card rounded-xl p-card-padding flex flex-col items-center text-center">
+                    <div class="w-12 h-12 rounded-full bg-tertiary-container/10 text-tertiary-container flex items-center justify-center mb-6 border border-tertiary-container/20">
+                        <span class="material-symbols-outlined">favorite</span>
+                    </div>
+                    <h3 class="font-headline-lg text-on-surface mb-3">3. Generate Advisories</h3>
+                    <p class="text-on-surface-variant text-sm leading-relaxed">
+                        We generate detailed precautions for different citizen groups to help limit exposure to air toxicity in real time.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
 
     <!-- Footer -->
-    <footer>
-        <div class="footer-logo">AirGuard System</div>
-        <div>&copy; 2026 AirGuard. All rights reserved.</div>
+    <footer class="bg-transparent w-full pt-section-gap pb-container-padding border-t border-white/5 max-w-7xl mx-auto px-container-padding grid grid-cols-1 md:grid-cols-4 gap-gutter z-10 relative">
+        <div class="col-span-1 md:col-span-4 flex flex-col md:flex-row justify-between items-center gap-8 mb-8">
+            <span class="font-headline-xl text-headline-xl font-bold text-on-surface">AirGuard</span>
+            <div class="flex gap-6">
+                <a class="text-on-surface-variant font-body-md hover:text-primary transition-colors opacity-80 hover:opacity-100" href="#">Privacy Policy</a>
+                <a class="text-on-surface-variant font-body-md hover:text-primary transition-colors opacity-80 hover:opacity-100" href="#">Terms of Service</a>
+                <a class="text-on-surface-variant font-body-md hover:text-primary transition-colors opacity-80 hover:opacity-100" href="#">Support</a>
+                <a class="text-on-surface-variant font-body-md hover:text-primary transition-colors opacity-80 hover:opacity-100" href="#">Contact</a>
+            </div>
+        </div>
+        <div class="col-span-1 md:col-span-4 text-center">
+            <p class="text-on-surface-variant font-body-md">© 2026 AirGuard Atmosphere. All rights reserved.</p>
+        </div>
     </footer>
 
     <!-- Logic Controller -->
@@ -812,32 +530,146 @@
         const locationBtn = document.getElementById('locationBtn');
         const loader = document.getElementById('loader');
         const resultsCard = document.getElementById('resultsCard');
+        const weatherRow = document.getElementById('weatherRow');
         const aqiRing = document.getElementById('aqiRing');
+        
+        // Navigation toggle selectors
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks = document.getElementById('navLinks');
 
-        // DOM elements to load values into
+        // DOM elements
         const displayCity = document.getElementById('displayCity').querySelector('span');
         const categoryBadge = document.getElementById('categoryBadge');
         const aqiValue = document.getElementById('aqiValue');
-        const recommendationMsg = document.getElementById('recommendationMsg');
-        
+        const sensitiveAdvisory = document.getElementById('sensitiveAdvisory');
+        const generalAdvisory = document.getElementById('generalAdvisory');
+        const timestamp = document.getElementById('timestamp');
+        const dominantText = document.getElementById('dominantText');
+
+        // Weather row selectors
+        const weatherTemp = document.getElementById('weather-temp');
+        const weatherHumidity = document.getElementById('weather-humidity');
+        const weatherWind = document.getElementById('weather-wind');
+        const weatherUv = document.getElementById('weather-uv');
+
+        let chartInstance = null;
+
+        // Colors & Gradients for severity categories
         const colors = {
-            "Good": "#34d399",
-            "Moderate": "#fbbf24",
-            "Unhealthy for Sensitive Groups": "#fb923c",
-            "Unhealthy": "#f87171",
-            "Very Unhealthy": "#c084fc",
-            "Hazardous": "#e11d48"
+            "Good": { text: "#9cdca3", start: "#9cdca3", end: "#86efac", bg: "rgba(156,220,163,0.2)", border: "rgba(156,220,163,0.3)" },
+            "Moderate": { text: "#fef08a", start: "#9cdca3", end: "#fef08a", bg: "rgba(254,240,138,0.2)", border: "rgba(254,240,138,0.3)" },
+            "Unhealthy for Sensitive Groups": { text: "#fdba74", start: "#fef08a", end: "#fdba74", bg: "rgba(253,186,116,0.2)", border: "rgba(253,186,116,0.3)" },
+            "Unhealthy": { text: "#f87171", start: "#fdba74", end: "#f87171", bg: "rgba(248,113,113,0.2)", border: "rgba(248,113,113,0.3)" },
+            "Very Unhealthy": { text: "#c084fc", start: "#f87171", end: "#c084fc", bg: "rgba(192,132,252,0.2)", border: "rgba(192,132,252,0.3)" },
+            "Hazardous": { text: "#f43f5e", start: "#c084fc", end: "#f43f5e", bg: "rgba(244,63,94,0.2)", border: "rgba(244,63,94,0.3)" }
         };
 
-        // Standard thresholds for pollutants to color cards dynamically
-        const pollutantThresholds = {
-            'pm25': { moderate: 35, poor: 55 },
-            'pm10': { moderate: 150, poor: 250 },
-            'no2':  { moderate: 40, poor: 80 },
-            'so2':  { moderate: 20, poor: 80 },
-            'o3':   { moderate: 100, poor: 160 },
-            'co':   { moderate: 2, poor: 9 }
+        // WHO guideline limits for percentage calculations
+        const whoLimits = {
+            'pm25': 15,
+            'pm10': 45,
+            'no2': 25,
+            'so2': 40,
+            'o3': 100,
+            'co': 4
         };
+
+        // Offline templates for advisory cards
+        const advisories = {
+            "Good": {
+                "sensitive": "No precautions needed. Enjoy outdoor activities.",
+                "general": "Air quality is excellent. No health risks."
+            },
+            "Moderate": {
+                "sensitive": "Unusually sensitive individuals should consider reducing prolonged outdoor exertion.",
+                "general": "Air quality is acceptable for most people."
+            },
+            "Unhealthy for Sensitive Groups": {
+                "sensitive": "People with respiratory or heart conditions, children, and the elderly should limit outdoor activity.",
+                "general": "General public is less likely to be affected but should be aware."
+            },
+            "Unhealthy": {
+                "sensitive": "Avoid prolonged outdoor exertion. Keep windows closed and use air purifiers if available.",
+                "general": "Everyone may begin to experience health effects. Reduce outdoor activity."
+            },
+            "Very Unhealthy": {
+                "sensitive": "Stay indoors. Use N95 masks if you must go outside. Seek medical attention if symptomatic.",
+                "general": "Health alert — everyone should significantly reduce outdoor exposure."
+            },
+            "Hazardous": {
+                "sensitive": "Remain indoors with air filtration. Seek immediate medical help for any symptoms.",
+                "general": "Emergency conditions — everyone should avoid all outdoor activity."
+            }
+        };
+
+        // Hamburger menu toggle
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('hidden');
+            navLinks.classList.toggle('flex');
+        });
+
+        // Active navigation link updater (underline spy)
+        const navLinksList = document.querySelectorAll('#navLinks a');
+        const sections = [
+            { id: '#resultsCard', el: document.getElementById('resultsCard') },
+            { id: '#forecast-section', el: document.getElementById('forecast-section') },
+            { id: '#advisories-section', el: document.getElementById('advisories-section') },
+            { id: '#how-it-works', el: document.getElementById('how-it-works') }
+        ];
+
+        function updateActiveNav(href) {
+            navLinksList.forEach(link => {
+                if (link.getAttribute('href') === href) {
+                    link.className = "text-primary font-semibold border-b-2 border-primary py-1";
+                } else {
+                    link.className = "text-on-surface-variant font-medium hover:text-primary transition-all duration-300 py-1";
+                }
+            });
+        }
+
+        // Click handler to update underline instantly and close mobile menu
+        navLinksList.forEach(link => {
+            link.addEventListener('click', () => {
+                const href = link.getAttribute('href');
+                updateActiveNav(href);
+                
+                if (window.innerWidth < 768) {
+                    navLinks.classList.add('hidden');
+                    navLinks.classList.remove('flex');
+                }
+            });
+        });
+
+        // Scroll spy IntersectionObserver
+        const observerOptions = {
+            root: null,
+            rootMargin: '-30% 0px -40% 0px',
+            threshold: 0
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.getAttribute('id');
+                    updateActiveNav(`#${id}`);
+                }
+            });
+        }, observerOptions);
+
+        sections.forEach(sec => {
+            if (sec.el) observer.observe(sec.el);
+        });
+
+        // Trigger default city load on page open
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchByCity("Delhi");
+        });
+
+        // Scroll helper
+        function scrollToSearch() {
+            cityInput.scrollIntoView({ behavior: 'smooth' });
+            cityInput.focus();
+        }
 
         // Listen for Search Submit
         cityInput.addEventListener('keypress', (e) => {
@@ -857,14 +689,42 @@
                         fetchPollutantsAndPredict(lat, lon, "Your Location");
                     },
                     err => {
-                        alert("Could not retrieve geolocation. Please search a city name manually.");
+                        showToast("Could not retrieve geolocation. Search manually.");
                         hideLoading();
                     }
                 );
             } else {
-                alert("Geolocation is not supported by your browser.");
+                showToast("Geolocation is not supported by your browser.");
             }
         });
+
+        // Custom typewriter script
+        function typeWriter(element, text) {
+            element.textContent = "";
+            let i = 0;
+            const speed = 12; // speed in ms
+            function type() {
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            type();
+        }
+
+        // Custom toast alerter
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-msg');
+            toastMsg.textContent = msg;
+            toast.style.opacity = '1';
+            toast.style.transform = 'translateY(0)';
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(-20px)';
+            }, 4000);
+        }
 
         async function fetchByCity(city) {
             showLoading();
@@ -873,7 +733,7 @@
                 const geoData = await geoRes.json();
                 
                 if (!geoData.results || geoData.results.length === 0) {
-                    alert("Location not resolved. Try another city.");
+                    showToast("Location not resolved. Try another city.");
                     hideLoading();
                     return;
                 }
@@ -884,27 +744,37 @@
                 
             } catch (err) {
                 console.error(err);
-                alert("Error searching location.");
+                showToast("Error searching location.");
                 hideLoading();
             }
         }
 
         async function fetchPollutantsAndPredict(lat, lon, locationName) {
             try {
-                const url = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=pm10,pm2_5,carbon_monoxide,nitrogen_dioxide,sulphur_dioxide,ozone`;
-                const aqRes = await fetch(url);
+                // 1. Fetch current pollutants + hourly forecast for 24 hours
+                const aqUrl = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=pm10,pm2_5,carbon_monoxide,nitrogen_dioxide,sulphur_dioxide,ozone&hourly=us_aqi&forecast_days=1`;
+                const aqRes = await fetch(aqUrl);
                 const aqData = await aqRes.json();
                 const current = aqData.current;
 
                 if (!current) throw new Error("Missing air quality records from Open-Meteo");
 
-                // PM2.5, PM10, NO2, SO2, O3, CO
                 const pm25 = current.pm2_5 || 0;
                 const pm10 = current.pm10 || 0;
                 const no2  = current.nitrogen_dioxide || 0;
                 const so2  = current.sulphur_dioxide || 0;
                 const o3   = current.ozone || 0;
                 const co   = (current.carbon_monoxide || 0) / 1000; // µg/m³ to mg/m³
+
+                // 2. Fetch current weather conditions (temp, humidity, wind speed, uv index)
+                const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,uv_index&forecast_days=1`;
+                let weatherData = null;
+                try {
+                    const weatherRes = await fetch(weatherUrl);
+                    weatherData = await weatherRes.json();
+                } catch (we) {
+                    console.error("Failed to load weather context", we);
+                }
 
                 const predictQuery = new URLSearchParams({
                     'PM2.5': pm25,
@@ -921,23 +791,17 @@
 
                 if (predData.error) throw new Error(predData.error);
 
-                updateUI(locationName, predData, pm25, pm10, no2, so2, o3, co);
+                updateUI(locationName, predData, pm25, pm10, no2, so2, o3, co, weatherData, aqData.hourly);
 
             } catch (err) {
                 console.error(err);
-                alert("Prediction Error: " + err.message);
+                showToast("Prediction Error: " + err.message);
             } finally {
                 hideLoading();
             }
         }
 
-        function getCardColor(val, thresholds) {
-            if (val <= thresholds.moderate) return 'var(--good)';
-            if (val <= thresholds.poor) return 'var(--moderate)';
-            return 'var(--unhealthy)';
-        }
-
-        function updateUI(locationName, predData, pm25, pm10, no2, so2, o3, co) {
+        function updateUI(locationName, predData, pm25, pm10, no2, so2, o3, co, weatherData, hourlyForecast) {
             displayCity.textContent = locationName;
             
             // Populate readings
@@ -948,50 +812,260 @@
             document.getElementById('val-o3').textContent = o3.toFixed(1);
             document.getElementById('val-co').textContent = co.toFixed(2);
 
-            // Apply specific accent colors on pollutant cards
-            updateCardAccent('pm25', pm25);
-            updateCardAccent('pm10', pm10);
-            updateCardAccent('no2', no2);
-            updateCardAccent('so2', so2);
-            updateCardAccent('o3', o3);
-            updateCardAccent('co', co);
+            // Compute WHO percentages
+            const pctPm25 = Math.min(Math.round((pm25 / whoLimits.pm25) * 100), 500);
+            const pctPm10 = Math.min(Math.round((pm10 / whoLimits.pm10) * 100), 500);
+            const pctNo2  = Math.min(Math.round((no2  / whoLimits.no2)  * 100), 500);
+            const pctSo2  = Math.min(Math.round((so2  / whoLimits.so2)  * 100), 500);
+            const pctO3   = Math.min(Math.round((o3   / whoLimits.o3)   * 100), 500);
+            const pctCo   = Math.min(Math.round((co   / whoLimits.co)   * 100), 500);
+
+            // Populate labels
+            document.getElementById('pct-pm25').textContent = `${pctPm25}% of WHO safety limit`;
+            document.getElementById('pct-pm10').textContent = `${pctPm10}% of WHO safety limit`;
+            document.getElementById('pct-no2').textContent  = `${pctNo2}% of WHO safety limit`;
+            document.getElementById('pct-so2').textContent  = `${pctSo2}% of WHO safety limit`;
+            document.getElementById('pct-o3').textContent   = `${pctO3}% of WHO safety limit`;
+            document.getElementById('pct-co').textContent   = `${pctCo}% of WHO safety limit`;
+
+            // Style progress bars
+            updateProgressBar('pm25', pctPm25);
+            updateProgressBar('pm10', pctPm10);
+            updateProgressBar('no2', pctNo2);
+            updateProgressBar('so2', pctSo2);
+            updateProgressBar('o3', pctO3);
+            updateProgressBar('co', pctCo);
+
+            // Determine dominant pollutant
+            const pollutantPercentages = {
+                'PM2.5': pctPm25,
+                'PM10': pctPm10,
+                'NO2': pctNo2,
+                'SO2': pctSo2,
+                'O3': pctO3,
+                'CO': pctCo
+            };
+            let dominantPollutant = 'PM2.5';
+            let maxPct = 0;
+            for (const [key, value] of Object.entries(pollutantPercentages)) {
+                if (value > maxPct) {
+                    maxPct = value;
+                    dominantPollutant = key;
+                }
+            }
+            dominantText.textContent = `Dominant: ${dominantPollutant}`;
+
+            // Populate weather metrics row if available
+            if (weatherData && weatherData.current) {
+                const cur = weatherData.current;
+                weatherTemp.textContent = `${cur.temperature_2m.toFixed(1)}°C`;
+                weatherHumidity.textContent = `${cur.relative_humidity_2m}%`;
+                weatherWind.textContent = `${cur.wind_speed_10m.toFixed(1)} km/h`;
+                weatherUv.textContent = cur.uv_index.toFixed(1);
+                weatherRow.classList.remove('hidden');
+                weatherRow.classList.add('grid');
+            } else {
+                weatherRow.classList.add('hidden');
+            }
 
             const aqiVal = Math.round(predData.predicted_aqi);
             aqiValue.textContent = aqiVal;
             categoryBadge.textContent = predData.category;
-            recommendationMsg.textContent = predData.recommendation;
 
-            // Compute dashoffset for the SVG ring
-            // Circumference of r=84 is 2 * pi * 84 = 527.78 (528)
-            const maxVal = 300; // max expected AQI for mapping full ring
+            // Trigger typing effect on advisory elements
+            const advice = advisories[predData.category] || advisories["Moderate"];
+            typeWriter(sensitiveAdvisory, advice.sensitive);
+            typeWriter(generalAdvisory, advice.general);
+
+            // Set AQI dial circle dashoffset (r=45, circumference = 283)
+            const maxVal = 300; 
             const percentage = Math.min(aqiVal / maxVal, 1.0);
-            const offset = 528 - (528 * percentage);
-            aqiRing.style.strokeDashoffset = offset;
+            const offset = 283 - (283 * percentage);
+            aqiRing.style.strokeDashoffset = '283';
+            setTimeout(() => {
+                aqiRing.style.strokeDashoffset = offset;
+            }, 50);
 
-            // Color adjustments
-            const color = colors[predData.category] || "#94a3b8";
-            document.documentElement.style.setProperty('--current-color', color);
-            document.documentElement.style.setProperty('--current-shadow', `${color}66`);
+            // Update AQI scale reference pointer left percentage
+            const pointerPct = Math.min((aqiVal / 300) * 100, 100);
+            document.getElementById('aqiPointer').style.left = `${pointerPct}%`;
 
-            // Animate grid insertion
-            resultsCard.style.display = 'grid';
-            setTimeout(() => resultsCard.classList.add('visible'), 50);
+            // Dynamic colors settings
+            const colorConf = colors[predData.category] || colors["Moderate"];
+            
+            // Update gradient stop colors for the ring
+            document.getElementById('grad-start').setAttribute('stop-color', colorConf.start);
+            document.getElementById('grad-end').setAttribute('stop-color', colorConf.end);
+
+            // Update badge style classes
+            categoryBadge.style.color = colorConf.text;
+            categoryBadge.style.backgroundColor = colorConf.bg;
+            categoryBadge.style.borderColor = colorConf.border;
+
+            // Set Timestamp
+            const now = new Date();
+            timestamp.textContent = `Last updated: ${now.toLocaleTimeString()}`;
+
+            // 3. Render Chart.js line plot for hourly forecast
+            if (hourlyForecast && hourlyForecast.us_aqi) {
+                renderForecastChart(hourlyForecast, colorConf.text);
+            }
+
+            // Show results
+            resultsCard.classList.remove('hidden');
+            resultsCard.classList.add('grid');
         }
 
-        function updateCardAccent(id, val) {
-            const card = document.getElementById(`card-${id}`);
-            const color = getCardColor(val, pollutantThresholds[id]);
-            card.style.setProperty('--card-accent', color);
+        function updateProgressBar(id, pct) {
+            const bar = document.getElementById(`bar-${id}`);
+            bar.style.width = `${Math.min(pct, 100)}%`;
+            if (pct <= 100) {
+                bar.className = "h-full bg-green-400 transition-all duration-1000";
+            } else if (pct <= 200) {
+                bar.className = "h-full bg-yellow-400 transition-all duration-1000";
+            } else {
+                bar.className = "h-full bg-red-400 transition-all duration-1000";
+            }
+        }
+
+        function renderForecastChart(hourlyData, strokeColor) {
+            const ctx = document.getElementById('forecastChart').getContext('2d');
+            
+            // Parse labels (HH:00)
+            const labels = hourlyData.time.slice(0, 24).map(t => {
+                const d = new Date(t);
+                return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            });
+            const data = hourlyData.us_aqi.slice(0, 24);
+
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'AQI Forecast',
+                        data: data,
+                        borderColor: strokeColor,
+                        borderWidth: 2,
+                        pointBackgroundColor: strokeColor,
+                        pointHoverRadius: 6,
+                        tension: 0.4,
+                        fill: true,
+                        backgroundColor: (context) => {
+                            const chart = context.chart;
+                            const {ctx, chartArea} = chart;
+                            if (!chartArea) return null;
+                            const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+                            gradient.addColorStop(0, strokeColor + '33'); // semi-transparent color
+                            gradient.addColorStop(1, 'transparent');
+                            return gradient;
+                        }
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            backgroundColor: 'rgba(15, 17, 28, 0.95)',
+                            titleColor: '#fff',
+                            bodyColor: '#daebff',
+                            borderColor: strokeColor + '66',
+                            borderWidth: 1
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: 'rgba(255, 255, 255, 0.4)', font: { family: 'Outfit' } }
+                        },
+                        y: {
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: { color: 'rgba(255, 255, 255, 0.4)', font: { family: 'Outfit' } }
+                        }
+                    }
+                }
+            });
         }
 
         function showLoading() {
-            loader.style.display = 'flex';
-            resultsCard.classList.remove('visible');
-            resultsCard.style.display = 'none';
+            loader.classList.remove('hidden');
+            loader.classList.add('flex');
+            resultsCard.classList.add('hidden');
+            resultsCard.classList.remove('grid');
+            weatherRow.classList.add('hidden');
         }
 
         function hideLoading() {
-            loader.style.display = 'none';
+            loader.classList.add('hidden');
+            loader.classList.remove('flex');
+        }
+
+        // Theme toggle with circular ripple animation
+        const themeToggle = document.getElementById('themeToggle');
+        const themeToggleIcon = document.getElementById('themeToggleIcon');
+        const themeToggleMobile = document.getElementById('themeToggleMobile');
+        const themeToggleMobileIcon = document.getElementById('themeToggleMobileIcon');
+
+        function handleThemeToggle(event) {
+            const isDark = document.documentElement.classList.contains('dark');
+            
+            // Check if document transition is supported
+            if (!document.startViewTransition) {
+                toggleTheme(!isDark);
+                return;
+            }
+
+            const x = event.clientX || window.innerWidth / 2;
+            const y = event.clientY || window.innerHeight / 2;
+            const endRadius = Math.hypot(
+                Math.max(x, window.innerWidth - x),
+                Math.max(y, window.innerHeight - y)
+            );
+
+            const transition = document.startViewTransition(() => {
+                toggleTheme(!isDark);
+            });
+
+            transition.ready.then(() => {
+                const clipPath = [
+                    `circle(0px at ${x}px ${y}px)`,
+                    `circle(${endRadius}px at ${x}px ${y}px)`
+                ];
+                
+                document.documentElement.animate(
+                    {
+                        clipPath: clipPath,
+                    },
+                    {
+                        duration: 400,
+                        easing: 'ease-out',
+                        pseudoElement: '::view-transition-new(root)',
+                    }
+                );
+            });
+        }
+
+        themeToggle.addEventListener('click', handleThemeToggle);
+        themeToggleMobile.addEventListener('click', handleThemeToggle);
+
+        function toggleTheme(toDark) {
+            if (toDark) {
+                document.documentElement.classList.add('dark');
+                themeToggleIcon.textContent = 'light_mode';
+                themeToggleMobileIcon.textContent = 'light_mode';
+            } else {
+                document.documentElement.classList.remove('dark');
+                themeToggleIcon.textContent = 'dark_mode';
+                themeToggleMobileIcon.textContent = 'dark_mode';
+            }
         }
     </script>
 </body>

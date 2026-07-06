@@ -3,7 +3,11 @@ import joblib
 import pandas as pd
 import os
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='../', static_url_path='')
+
+@app.route('/')
+def serve_index():
+    return app.send_static_file('index.html')
 
 # Load the trained model when Vercel spins up the serverless function
 MODEL_PATH = os.path.join(os.path.dirname(__file__), "aqi_model.joblib")
